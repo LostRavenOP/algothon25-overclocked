@@ -137,9 +137,9 @@ def getMyPosition(prcSoFar):
 
     trend = np.log(prcSoFar[:, -1] / prcSoFar[:, -60])
     vol = np.std(returns[:, -30:], axis=1)
-    vol_cut = np.percentile(vol, 80)
+    vol_cut = np.percentile(vol, 82)
 
-    signal_thresh = np.percentile(np.abs(burst), 80)
+    signal_thresh = np.percentile(np.abs(burst), 82)
 
     valid_long = (burst > signal_thresh) & (trend > 0.05) & (vol < vol_cut)
     valid_short = (burst < -signal_thresh) & (trend < -0.05) & (vol < vol_cut)
