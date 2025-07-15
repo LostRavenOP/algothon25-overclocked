@@ -136,7 +136,7 @@ def getMyPosition(prcSoFar):
     burst = (burst_raw + np.roll(burst_raw,1) + np.roll(burst_raw,2))/3
 
     trend = np.log(prcSoFar[:, -1] / prcSoFar[:, -60])
-    vol = np.std(returns[:, -60:], axis=1)
+    vol = np.std(returns[:, -30:], axis=1)
     vol_cut = np.percentile(vol, 80)
 
     signal_thresh = np.percentile(np.abs(burst), 80)
@@ -145,7 +145,7 @@ def getMyPosition(prcSoFar):
     valid_short = (burst < -signal_thresh) & (trend < -0.05) & (vol < vol_cut)
 
     longs = [i for i in np.argsort(burst)[::-1] if valid_long[i]][:1]
-    shorts = [i for i in np.argsort(burst) if valid_short[i]][:0]  # only longs to reduce turnover
+    shorts = [i for i in np.argsort(burst) if valid_short[i]][:1]  # only longs to reduce turnover
 
     capital = 1_000_000
     max_dollars = 10_000
@@ -165,7 +165,6 @@ def getMyPosition(prcSoFar):
                 pos[i] = 0
                 hold_days[i] = 0
 
-    for i in range(nInst):
         if pos[i] == 0 and currentPos[i] != 0:
             if hold_days[i] < 5:
                 pos[i] = currentPos[i]
@@ -173,7 +172,7 @@ def getMyPosition(prcSoFar):
             else:
                 hold_days[i] = 0
         elif pos[i] == 0:
-            hold_days[i] = 0
+            hold_days[i] = 0        
 
     currentPos = np.clip(np.round(pos), -1000, 1000)
     return currentPos
