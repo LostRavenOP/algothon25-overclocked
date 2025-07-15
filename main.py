@@ -1,3 +1,4 @@
+# ------ General Round Submission Code ------
 import numpy as np
 
 nInst = 50
@@ -10,16 +11,16 @@ def getMyPosition(prcSoFar):
     minN = 3
     maxN = 5
     burst_percentile = 81.6
-    trend_thresh = 0.05
+    trend_thresh = 0.00025
     vol_percentile = 83
     base_target_risk = 0.01
     max_dollars = 10000
-    max_port_vol = 0.013  # Stricter portfolio volatility cap
+    max_port_vol = 0.0013  # Stricter portfolio volatility cap
     corr_thresh = 0.8
     stop_loss_mult = 1.1  # Tighter stop-loss
     take_profit_mult = 3.0  # Let winners run a bit more
     burst_weight = 0.7
-    momentum_weight = 0.3
+    momentum_weight = 0.29
 
     global currentPos, hold_days, entry_prices
     n, t = prcSoFar.shape
@@ -33,7 +34,7 @@ def getMyPosition(prcSoFar):
     burst_raw = np.log(prcSoFar[:, -1] / prcSoFar[:, -6])
     burst = (burst_raw + np.roll(burst_raw, 1) + np.roll(burst_raw, 2)) / 3
     trend = np.log(prcSoFar[:, -1] / prcSoFar[:, -60])
-    vol = np.std(returns[:, -30:], axis=1)
+    vol = np.std(returns[:, -38:], axis=1)
     vol_cut = np.percentile(vol, vol_percentile)
     signal_thresh = np.percentile(np.abs(burst), burst_percentile)
 
@@ -129,9 +130,10 @@ def getMyPosition(prcSoFar):
     currentPos = np.clip(np.round(pos), -1000, 1000)
     return currentPos
 
-#mean(PL): 106.1
-#return: 0.00788
-#StdDev(PL): 373.32
-#annSharpe(PL): 4.48 
-#totDvolume: 2675659 
-#Score: 68.75
+# =====
+# mean(PL): 117.6
+# return: 0.00624
+# StdDev(PL): 409.18
+# annSharpe(PL): 4.53
+# totDvolume: 3742542
+# Score: 76.66
